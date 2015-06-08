@@ -88,6 +88,12 @@ module.exports = function(config) {
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: true,
 
+    plugins: [
+      'karma-jasmine',
+      'karma-requirejs',
+      'karma-chrome-launcher',
+      'karma-phantomjs-launcher'
+    ],
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits

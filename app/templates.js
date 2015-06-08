@@ -52,10 +52,20 @@ define(
       {{/moveToItems}}\
       </ul>';
 
+    var alerts =
+      '<div class="alerts">\
+        <ul class="alerts-list">\
+          {{#alerts}}\
+            <li id="{{.}}" class="alerts-item">{{.}}</li>\
+          {{/alerts}}\
+        </ul>\
+      </div>';
+
     return {
       mailItem: mailItem,
       composeBox: composeBox,
-      moveToSelector: moveToSelector
+      moveToSelector: moveToSelector,
+      alerts: alerts
     }
   }
 

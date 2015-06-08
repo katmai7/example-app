@@ -3,7 +3,7 @@
 describeComponent('app/component_ui/compose_box', function() {
 
   beforeEach(function() {
-    setupComponent(
+    this.setupComponent(
       readFixtures('compose_box.html'),
       {
         newMailType: 'newMail',

@@ -2,7 +2,7 @@
 
 describeComponent('app/component_ui/folders', function() {
   beforeEach(function() {
-    setupComponent();
+    this.setupComponent();
   });
 
   it('should listen to uiFolderSelectionChanged and trigger fetchMailItems', function() {

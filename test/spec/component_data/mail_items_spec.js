@@ -2,7 +2,7 @@
 
 describeComponent('app/component_data/mail_items', function() {
   beforeEach(function() {
-    setupComponent(
+    this.setupComponent(
       {
         dataStore: {
           contacts: [

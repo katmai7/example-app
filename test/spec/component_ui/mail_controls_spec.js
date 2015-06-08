@@ -2,7 +2,7 @@
 
 describeComponent('app/component_ui/mail_controls', function() {
   beforeEach(function () {
-    setupComponent(readFixtures('mail_controls.html'));
+    this.setupComponent(readFixtures('mail_controls.html'));
   });
 
   it('should trigger appropriate event when delete control clicked', function() {

@@ -2,7 +2,7 @@
 
 describeComponent('app/component_data/move_to', function() {
   beforeEach(function() {
-    setupComponent(
+    this.setupComponent(
       {
         recipientHintId: 'abc',
         dataStore: {

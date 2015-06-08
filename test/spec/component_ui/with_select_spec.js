@@ -2,7 +2,7 @@
 
 describeMixin('app/component_ui/with_select', function() {
   beforeEach(function() {
-    setupComponent($('<table>' + readFixtures('mail_items.html') + '</table>'), {
+    this.setupComponent($('<table>' + readFixtures('mail_items.html') + '</table>'), {
       itemSelector: 'tr.mail-item',
       selectedItemSelector: 'tr.mail-item.selected',
       selectionChangedEvent: 'testSelectionChangedEvent',

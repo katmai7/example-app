@@ -10,7 +10,8 @@ define(
     'app/component_ui/mail_controls',
     'app/component_ui/compose_box',
     'app/component_ui/folders',
-    'app/component_ui/move_to_selector'
+    'app/component_ui/move_to_selector',
+    'app/component_ui/alerts'
   ],
 
   function(
@@ -21,21 +22,31 @@ define(
     MailControlsUI,
     ComposeBoxUI,
     FoldersUI,
-    MoveToSelectorUI) {
+    MoveToSelectorUI,
+    Alerts) {
 
     function initialize() {
+      Alerts.attachTo(document);
+      
       MailItemsData.attachTo(document);
+
       ComposeBoxData.attachTo(document, {
         selectedFolders: ['inbox']
       });
+
       MoveToData.attachTo(document);
+
       MailItemsUI.attachTo('#mail_items', {
         itemContainerSelector: '#mail_items_TB',
         selectedFolders: ['inbox']
       });
+
       MailControlsUI.attachTo('#mail_controls');
+
       ComposeBoxUI.attachTo('#compose_box');
+
       FoldersUI.attachTo('#folders');
+
       MoveToSelectorUI.attachTo('#move_to_selector', {
         moveActionSelector: '#move_mail',
         selectedFolders: ['inbox']

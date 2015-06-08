@@ -2,7 +2,7 @@
 
 describeComponent('app/component_ui/mail_items', function() {
   beforeEach(function() {
-    setupComponent('<table id="container"><tbody id="container-tb"></tbody></table>', {
+    this.setupComponent('<table id="container"><tbody id="container-tb"></tbody></table>', {
       itemContainerSelector: '#container-tb',
       deleteFolder: 'delete',
       selectedFolders: ['inbox'],

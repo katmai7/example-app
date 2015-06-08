@@ -2,7 +2,7 @@
 
 describeComponent('app/component_data/compose_box', function() {
   beforeEach(function() {
-    setupComponent(
+    this.setupComponent(
       {
         recipientHintId: "abc",
         dataStore: {

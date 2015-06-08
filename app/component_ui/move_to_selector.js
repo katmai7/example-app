@@ -25,7 +25,7 @@ define(
       this.requestSelectorWidget = function(ev, data) {
         this.trigger('uiAvailableFoldersRequested', {
           folder: this.attr.selectedFolders[0]
-        })
+        });
       };
 
       this.launchSelector = function(ev, data) {
@@ -48,6 +48,7 @@ define(
 
       this.updateMailItemSelections = function(ev, data) {
         this.attr.selectedMailItems = data.selectedIds;
+
       }
 
       this.updateFolderSelections = function(ev, data) {
@@ -59,6 +60,10 @@ define(
           itemIds: this.attr.selectedMailItems,
           fromFolder: this.attr.selectedFolders[0],
           toFolder: data.selectedIds[0]
+        });
+
+        this.trigger('alerts:show', {
+          msg: 'Mail moved  to "' + data.selectedIds[0] + '" folder.'
         });
         this.$node.hide();
       };

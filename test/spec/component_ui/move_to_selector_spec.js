@@ -2,7 +2,7 @@
 
 describeComponent('app/component_ui/move_to_selector', function() {
   beforeEach(function () {
-    setupComponent(readFixtures('move_to_selector.html'), {
+    this.setupComponent(readFixtures('move_to_selector.html'), {
       moveActionSelector: '#move_mail'
     });
   });
