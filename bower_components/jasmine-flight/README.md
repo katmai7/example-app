@@ -13,9 +13,7 @@ Or install it with [Bower](http://bower.io/):
 bower install --save-dev jasmine-flight
 ```
 
-**N.B.** jasmine-flight depends on
-[jasmine](https://github.com/pivotal/jasmine) and
-[jasmine-jquery](https://github.com/velesin/jasmine-jquery)
+jasmine-flight depends on [jasmine](https://github.com/pivotal/jasmine)
 
 jasmine-flight assumes you'll be using RequireJS to load Flight modules, and
 that you've configured the Flight directory path. For example:
@@ -28,107 +26,185 @@ requirejs.config({
 });
 ```
 
-## Components
+# What is jasmine-flight?
+
+jasmine-flight provides a set of helpers to load and instantiate AMD components, mixins and modules.
+
+## describe helpers
+
+### describeComponent(componentPath, specDefinitions)
+
+Requires the component at componentPath and executes specDefinitions.
+
+* The component constructor is available from within specDefinitions as `this.Component`
+* To create a component instance, call `this.setupComponent`
+
+#### `componentPath`: String
+
+A path to an AMD component. E.g. `ui/compose`
+
+#### `specDefinitions`: Function
+
+A function to execute after the component has loaded. Should contain spec definitions.
+
+
+
+
+### ddescribeComponent(componentPath, specDefinitions)
+
+As per describeComponent, but prevents execution of any other specs.
+
+
+
+
+### describeMixin(mixinPath, specDefinitions)
+
+Requires the mixin at mixinPath and executes specDefinitions.
+
+* The Mixin is attached to a dummy Component
+* the dummy Component constructor is available from within specDefinitions as this.Component
+* To create a component instance, call `this.setupComponent`
+
+
+#### `mixinPath`: String
+
+A path to an AMD mixin. E.g. `ui/with_close_button`
+
+#### `specDefinitions`: Function
+
+A function to execute after the mixin has loaded. Should contain spec definitions.
+
+
+
+
+### ddescribeMixin(mixinPath, specDefinitions)
+
+As per describeMixin, but prevents execution of any other specs.
+
+
+
+
+### describeModule(modulePath, specDefinitions)
+
+Requires the AMD module at modulePath and executes specDefinitions
+
+* The module will be available as this.module from within specDefinitions.
+
+#### `modulePath`: String
+
+A path to an AMD module. E.g. `utils/time`
+
+#### `specDefinitions`: Function
+
+A function to execute after the module has loaded. Should contain spec definitions.
+
+### ddescribeModule(modulePath, specDefinitions)
+
+As per describeModule, but prevents execution of any other specs.
+
+
+
+
+## this.setupComponent(fixture, options)
+
+Instantiate a component or mixin within specDefinitions.
+
+* The component instance is available at `this.component`
+* The node the component is attached to is `this.$node`
+
+#### `fixture`: String | jQuery
+
+Generates a DOM element to attach the component to. If no fixture is provided, the component
+will be attached to an empty DOM node.
+
+#### `options`: Object
+
+Options to pass to the component.
+
+## Examples
+
+In almost all cases, describeMixin and describeComponent are effectively identical in their usage,
+thus only describeComponent is detailed here.
+
+### describeComponent with fixture
+
+This spec tests a simple component which has one methomd, 'getName', which returns the value
+of an input field.
 
 ```javascript
-describeComponent('path/to/component', function () {
-  beforeEach(function () {
-    setupComponent();
-  });
-
-  it('should do x', function () {
-    // a component instance is now accessible as this.component
-    // the component root node is attached to the DOM
-    // the component root node is also available as this.$node
+describeComponent('ui/text_input', function () {
+  it ('gets the value of the input field it is attached to', function () {
+    this.setupComponent('<input type="text" value="hello world" />');
+    expect(this.component.getValue()).toEqual('hello, world');
   });
 });
 ```
 
-## Mixins
+### describeComponent with options
+
+This spec tests a component which has one method, `getText`, which gets the text value of an element. It uses options to figure out which element to access.
 
 ```javascript
-describeMixin('path/to/mixin', function () {
-  // initialize the component and attach it to the DOM
-  beforeEach(function () {
-    setupComponent();
-  });
-
-  it('should do x', function () {
-    expect(this.component.doSomething()).toBe(expected);
-  });
-});
-```
-
-## Event spy
-
-```javascript
-describeComponent('data/twitter_profile', function () {
-  beforeEach(function () {
-    setupComponent();
-  });
-
-  describe('listens for uiNeedsTwitterUserId', function () {
-    // was the event triggered?
-    it('and triggers dataTwitterUserId', function () {
-      var eventSpy = spyOnEvent(document, 'dataTwitterProfile');
-      $(document).trigger('uiNeedsTwitterUserId', {
-        screen_name: 'tbrd'
-      });
-      expect(eventSpy).toHaveBeenTriggeredOn(document);
+describeComponent('ui/text', function () {
+  it ('gets the text of the element specified by elementSelector', function () {
+    this.setupComponent('<div><p class="js-name">Jimmy</p></div>', {
+      elementSelector: 'js-name'
     });
+    expect(this.component.getText()).toEqual('Jimmy');
+  });
+});
+```
 
-    // is the user id correct?
-    it('and has correct id', function () {
-      var eventSpy = spyOnEvent(document, 'dataTwitterUserId');
-      $(document).trigger('uiNeedsTwitteruserId', {
-        screen_name: 'tbrd'
-      });
-      expect(eventSpy.mostRecentCall.data).toEqual({
-        screen_name: 'tbrd',
-        id: 4149861
-      });
+### Stubbing mixin methods
+
+When testing components, you may want to stub out methods provided by mixins. In this example, we're
+stubbing a method named 'foo' (which was provided by a mixin) so that it always returns 'bar'.
+
+```javascript
+describeComponent('ui/text', function () {
+  it ('foo returns "foo"', function () {
+    this.setupComponent();
+    var stub = spyOn(this.component, 'foo').andReturn('bar');
+    expect(this.component.foo()).toEqual('bar');
+  });
+});
+```
+
+### Stubbing component methods
+
+It's probably not a good idea to stub out methods on the component you're testing, but if you really, really want to...
+
+```javascript
+describeComponent('ui/text', function () {
+  it('calls the stub instead', function () {
+    // spy on the prototype...
+    var spy = spyOn(this.Component.prototype, 'getText');
+
+    // ... and then instantiate the component
+    this.setupComponent();
+
+    expect(spy).toHaveBeenCalled();
+  });
+});
+```
+
+### Spying on events
+
+Event Spies are not part of this package but are mentioned here because it's mostly what you'll be wanting to do. spyOnEvent and the associated matchers are provided by https://github.com/velesin/jasmine-jquery
+
+```javascript
+describeComponent('ui/text', function () {
+  it('triggers 'data-username' after initialize', function () {
+    var spyEvent = spyOnEvent(document, 'data-username');
+    this.setupComponent({
+      username: 'bob'
+    });
+    expect(spyEvent).toHaveBeenTriggeredOnAndWith(document {
+      username: 'bob'
     });
   });
 });
 ```
-
-## setupComponent
-
-```javascript
-setupComponent(optionalFixture, optionalOptions);
-```
-
-Calling `setupComponent` twice will create an instance, tear it down and create a new one.
-
-### HTML Fixtures
-
-```javascript
-describeComponent('ui/twitter_profile', function () {
-  // is the component attached to the fixture?
-  it('this.component.$node has class "foo"', function () {
-    setupComponent('<span class="foo">Test</span>');
-    expect(this.component.$node).toHaveClass('foo');
-  });
-});
-```
-
-### Component Options
-
-```javascript
-describeComponent('data/twitter_profile', function () {
-  // is the option set correctly?
-  it('this.component.attr.baseUrl is set', function () {
-    setupComponent({
-      baseUrl: 'http://twitter.com/1.1/'
-    });
-    expect(this.component.attr.baseUrl).toBe('http://twitter.com/1.1/');
-  });
-});
-```
-
-# Teardown
-
-Components are automatically torn down after each test.
 
 ## Contributing to this project
 
